@@ -32,7 +32,7 @@ yline(norm(b-A*(A\b))/(normA*normx),":","Color",black,"LineWidth",3)
 axis([0 niter 1e-17 1e0])
 xlabel("Iteration $i$")
 ylabel("Residual $\|\mbox{\boldmath $b$}-\mbox{\boldmath $A$}\mbox{\boldmath $x$}_i\| / \|\mbox{\boldmath $A$}\| \|\mbox{\boldmath $x$}\|$")
-exportgraphics(gcf,"../figs/lsqr_backward.png")
+exportgraphics(gcf,"../figs/auto_lsqr_backward.png")
 saveas(gcf,"../figs/auto_lsqr_backward.fig")
 
 figure
@@ -45,7 +45,7 @@ legend({"PLSQR","PLSQR-IR (manual)","PLSQR-IR (auto)","Direct"},"Location","east
 axis([0 niter -Inf Inf])
 xlabel("Iteration $i$")
 ylabel("Forward error $\|\mbox{\boldmath $x$}-\mbox{\boldmath $x$}_i\| / \|\mbox{\boldmath $x$}\|$")
-exportgraphics(gcf,"../figs/lsqr_forward.png")
+exportgraphics(gcf,"../figs/auto_lsqr_forward.png")
 saveas(gcf,"../figs/auto_lsqr_forward.fig")
 
 figure
@@ -56,5 +56,5 @@ semilogy(0:(length(autolsqrir_res(:,3))-1),autolsqrir_res(:,3),"--","Color",oran
 yline(norm(b-A*(A\b))/(normA*norm(A\b)),":","Color",black,"LineWidth",3)
 xlabel("Iteration $i$")
 ylabel("Backward error $\|\mbox{\boldmath $b$}-\mbox{\boldmath $A$}\mbox{\boldmath $x$}_i\| / \|\mbox{\boldmath $A$}\| \|\mbox{\boldmath $x$}_i\|$")
-exportgraphics(gcf,"../figs/lsqr_backward_2.png")
+exportgraphics(gcf,"../figs/auto_lsqr_backward_2.png")
 saveas(gcf,"../figs/auto_lsqr_backward_2.fig")
