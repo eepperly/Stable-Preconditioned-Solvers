@@ -24,9 +24,9 @@ summary = @(y) [norm(b-A*(A'*y))/(normA*normx) norm(x-A'*y)/normx];
 close all
 for i = 1:2
     figure(i)
-    semilogy(0:100,lsqrstats(:,i),"Color",orange,"LineWidth",3); hold on
-    semilogy(0:100,cgstats(:,i),"--","Color",blue,"LineWidth",3)
+    semilogy(0:100,cgstats(:,i),"--","Color",blue,"LineWidth",3); hold on
     semilogy(0:100,cgadjstats(:,i),"-.","Color",pink,"LineWidth",3)
+    semilogy(0:100,lsqrstats(:,i),"Color",orange,"LineWidth",3)
     % semilogy(0:100,pcgstats(:,i),"-.","Color",purple,"LineWidth",3)
     xlabel("Iteration $i$")
     if i == 1
@@ -36,7 +36,7 @@ for i = 1:2
         saveas(gcf,"../figs/left_lsqr_backward.fig")
     else
         yline(norm(x-(A\b))/(normx),":","Color",black,"LineWidth",3)
-        legend({"LSQR","CG on (3.1)","CG on (3.2)","Direct"},"Location","northeast")
+        legend({"CG on (3.1)","CG on (3.2)","LSQR","Direct"},"Location","northeast")
         ylabel("Forward error $\|\mbox{\boldmath $x$}-\mbox{\boldmath $x$}_i\| / \|\mbox{\boldmath $x$}\|$")
         exportgraphics(gcf,"../figs/left_lsqr_forward.png")
         saveas(gcf,"../figs/left_lsqr_forward.fig")
