@@ -25,7 +25,9 @@ summary = @(xx) norm(b-A*xx) / (normA*normx);
 
 [xx,~,pcgirstats] = mycg(@(x) A*x,@(x) R\(R'\x),b,0,steps,summary);
 for refine = 1:refines
-    [xx,~,newstats] = mycg(@(x) A*x,@(x) R\(R'\x),b,0,steps,summary,xx);
+    summary = @(y) norm(b-A*(y+xx)) / (normA*normx);
+    [dx,~,newstats] = mycg(@(x) A*x,@(x) R\(R'\x),b-A*xx,0,steps,summary);
+    xx = xx + dx;
     pcgirstats(end+1:end+(length(newstats)-1)) = newstats(2:end);
 end
 
@@ -58,7 +60,9 @@ summary = @(y) norm(b-A*y) / (normA*normx);
 [x0,~,pcgstats2] = mycg(@(y) A*y,pfun,b,0,(refines+1)*steps,summary);
 [xx,~,pcgirstats2] = mycg(@(x) A*x,pfun,b,0,steps,summary);
 for refine = 1:refines
-    [xx,~,newstats] = mycg(@(x) A*x,pfun,b,0,steps,summary,xx);
+    summary = @(y) norm(b-A*(y+xx)) / (normA*normx);
+    [dx,~,newstats] = mycg(@(x) A*x,pfun,b-A*xx,0,steps,summary);
+    xx = xx + dx;
     pcgirstats2(end+1:end+(length(newstats)-1)) = newstats(2:end);
 end
 
@@ -72,7 +76,7 @@ figure('Position', [100, 100, 1100, 400])
 subplot(1,2,1)
 semilogy(0:(length(pcgstats)-1),pcgstats,"Color",blue,"LineWidth",3); hold on
 semilogy(0:(length(pcgirstats)-1),pcgirstats,"--","Color",orange,"LineWidth",3)
-yline(summary(A\b),":","Color",black,"LineWidth",3)
+yline(norm(b-A*(A\b)) / (normA*normx),":","Color",black,"LineWidth",3)
 axis([-Inf Inf 1e-17 1e0])
 xlabel("Iteration $i$")
 ylabel("Residual $\|\mbox{\boldmath $b$}-\mbox{\boldmath $A$}\mbox{\boldmath $x$}_i\| / \|\mbox{\boldmath $A$}\| \|\mbox{\boldmath $x$}\|$")
@@ -81,7 +85,7 @@ legend({"PCG","PCG-IR","Direct"})
 subplot(1,2,2)
 semilogy(0:(length(pcgstats2)-1),pcgstats2,"Color",blue,"LineWidth",3); hold on
 semilogy(0:(length(pcgirstats2)-1),pcgirstats2,"--","Color",orange,"LineWidth",3)
-yline(summary(A\b),":","Color",black,"LineWidth",3)
+yline(norm(b-A*(A\b)) / (normA*normx),":","Color",black,"LineWidth",3)
 axis([-Inf Inf 1e-17 1e0])
 xlabel("Iteration $i$")
 
