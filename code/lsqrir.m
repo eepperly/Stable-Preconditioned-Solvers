@@ -8,6 +8,11 @@ function [y,stats] = lsqrir(Afun,Atfun,Pfun,Ptfun,b,tol,iterschedule,varargin)
     else
         verbose = false;
     end
+    if length(varargin) > 2 && ~isempty(varargin{3})
+        use_ir = varargin{3}; % true if iterative refinement, false if restarting
+    else
+        use_ir = true;
+    end
 
     y = [];
 
@@ -39,11 +44,11 @@ function [y,stats] = lsqrir(Afun,Atfun,Pfun,Ptfun,b,tol,iterschedule,varargin)
     beta = norm(b); u = b / beta;
     for i = 1:length(iterschedule)
         v = adjvec(u); alpha = norm(v); v = v / alpha;
-        if isempty(y); y = zeros(size(v)); end
+        if isempty(y); y = zeros(size(v)); xold = zeros(size(v)); end
         w = v;
         phibar = beta; rhobar = alpha;
         resnorm = beta * alpha;
-        if ~isempty(summary) && i == 1; stats(end+1,:) = summary(y); end 
+        if ~isempty(summary) && i == 1; stats(end+1,:) = summary(xold+Pfun(y)); end 
         numiters = iterschedule(i);
         for iter = 1:numiters
             u = matvec(v) - alpha*u; beta = norm(u); u = u / beta;
@@ -57,14 +62,15 @@ function [y,stats] = lsqrir(Afun,Atfun,Pfun,Ptfun,b,tol,iterschedule,varargin)
             phibar = s * phibar;
             y = y + (phi/rho) * w;
             w = v - (theta/rho) * w;
-            if ~isempty(summary); stats(end+1,:) = summary(y); end %#ok<AGROW> 
+            if ~isempty(summary); stats(end+1,:) = summary(xold+Pfun(y)); end %#ok<AGROW> 
             if verbose
                 fprintf('%d\t%e\n',iter,abs(phibar * alpha * c))
             end
 
             if mod(iter,stagnation_check_frequency) == 0 && tol > 0
-                x = Pfun(y);
-                berr = norm(b - Afun(x)) / (norm(x) * Anorm);
+                x = xold + Pfun(y);
+                r = b - Afun(x);
+                berr = norm(r) / (norm(x) * Anorm);
 
                 if berr <= tol
                     found_solution = true;
@@ -83,7 +89,12 @@ function [y,stats] = lsqrir(Afun,Atfun,Pfun,Ptfun,b,tol,iterschedule,varargin)
             end
         end
 
-        if found_solution; break; end    
-        u = b - matvec(y); beta = norm(u); u = u / beta;
+        if found_solution; break; end   
+        x = xold + Pfun(y);
+        u = b - Afun(x); beta = norm(u); u = u / beta;
+        if use_ir
+            y = zeros(size(y));
+            xold = x;
+        end
     end
 end

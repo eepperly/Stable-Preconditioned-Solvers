@@ -14,12 +14,13 @@ x = randn(n,1); b = A*x;
 cond(A*Pinv)
 normA = norm(A);
 normx = norm(x);
-summary = @(y) [norm(b-A*(Pinv*y))/(normA*normx) norm(x-Pinv*y)/normx norm(b-A*(Pinv*y))/(normA*norm(Pinv*y))];
+summary_y = @(y) [norm(b-A*(Pinv*y))/(normA*normx) norm(x-Pinv*y)/normx norm(b-A*(Pinv*y))/(normA*norm(Pinv*y))];
+summary_x = @(xx) [norm(b-A*xx)/(normA*normx) norm(x-xx)/normx norm(b-A*xx)/(normA*norm(xx))];
 niter = 100;
 
-[~,~,lsqr_res] = mylsqr(@(y) A*(Pinv*y), @(y) Pinv'*(A'*y),b,0,niter,summary,[],[]);
-[~,lsqrir_res] = lsqrir(@(y) A*y, @(y) A'*y, @(y) Pinv*y, @(y) Pinv'*y, b, 0, [50,50], summary);
-[~,gmres_res] = mygmres(@(y) A*(Pinv*y),b,niter,summary);
+[~,~,lsqr_res] = mylsqr(@(y) A*(Pinv*y), @(y) Pinv'*(A'*y),b,0,niter,summary_y,[],[]);
+[~,lsqrir_res] = lsqrir(@(y) A*y, @(y) A'*y, @(y) Pinv*y, @(y) Pinv'*y, b, 0, [50,50], summary_x);
+[~,gmres_res] = mygmres(@(y) A*(Pinv*y),b,niter,summary_y);
 
 close all
 figure
