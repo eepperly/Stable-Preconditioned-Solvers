@@ -14,12 +14,15 @@ x = randn(n,1); b = A*x;
 cond(A*Pinv)
 normA = norm(A);
 normx = norm(x);
-summary_y = @(y) [norm(b-A*(Pinv*y))/(normA*normx) norm(x-Pinv*y)/normx norm(b-A*(Pinv*y))/(normA*norm(Pinv*y))];
-summary_x = @(xx) [norm(b-A*xx)/(normA*normx) norm(x-xx)/normx norm(b-A*xx)/(normA*norm(xx))];
-niter = 500;
+Avpa = vpa(A,24);
+bvpa = vpa(b,24);
+residual = @(xx) double(norm(bvpa-Avpa*vpa(xx,24)));
+summary_y = @(y) [residual(Pinv*y)/(normA*normx) norm(x-Pinv*y)/normx residual(Pinv*y)/(normA*norm(Pinv*y))];
+summary_x = @(xx) [residual(xx)/(normA*normx) norm(x-xx)/normx residual(xx)/(normA*norm(xx))];
+niter = 450;
 
 [~,~,lsqr_res] = mylsqr(@(y) A*(Pinv*y), @(y) Pinv'*(A'*y),b,0,niter,summary_y,[],[]);
-[~,lsqrir_res] = lsqrir(@(y) A*y, @(y) A'*y, @(y) Pinv*y, @(y) Pinv'*y, b, 0, 25*ones(20,1), summary_x);
+[~,lsqrir_res] = lsqrir(@(y) A*y, @(y) A'*y, @(y) Pinv*y, @(y) Pinv'*y, b, 0, 30*ones(15,1), summary_x);
 [~,autolsqrir_res] = lsqrir(@(y) A*y, @(y) A'*y, @(y) Pinv*y, @(y) Pinv'*y, b, sqrt(n)*eps, 5, summary_x);
 [~,gmres_res] = mygmres(@(y) A*(Pinv*y),b,niter,summary_y);
 
@@ -55,6 +58,7 @@ semilogy(0:niter,lsqrir_res(:,3),"-.","Color",purple,"LineWidth",3)
 semilogy(0:(length(autolsqrir_res(:,3))-1),autolsqrir_res(:,3),"--","Color",orange,"LineWidth",3)
 % semilogy(0:niter,gmres_res(:,3),"-.","Color",pink,"LineWidth",3)
 yline(norm(b-A*(A\b))/(normA*norm(A\b)),":","Color",black,"LineWidth",3)
+axis([0 niter -Inf Inf])
 xlabel("Iteration $i$")
 ylabel("Backward error $\|\mbox{\boldmath $b$}-\mbox{\boldmath $A$}\mbox{\boldmath $x$}_i\| / \|\mbox{\boldmath $A$}\| \|\mbox{\boldmath $x$}_i\|$")
 exportgraphics(gcf,"../figs/auto_lsqr_backward_2.png")

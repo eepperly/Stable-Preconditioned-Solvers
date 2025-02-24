@@ -31,14 +31,17 @@ for A_idx = 1:3
     lsqrrate = (mycond - 1)/(mycond+1);
     normA = norm(A);
     normx = norm(x);
+    Avpa = vpa(A,24);
+    bvpa = vpa(b,24);
+    residual = @(xx) norm(bvpa-Avpa*vpa(xx,24));
     
     % Create subplot
     subplot(1,3,A_idx)
     
-    [~,~,stats] = mylsqr(@(y) A*y,@(y) A'*y,b,0,steps,@(y) norm(b-A*y)/normA/normx);
+    [~,~,stats] = mylsqr(@(y) A*y,@(y) A'*y,b,0,steps,@(y) residual(y)/normA/normx);
     semilogy(0:(length(stats)-1),stats,"Color",orange,"LineWidth",3); hold on
     semilogy(0:steps,lsqrrate .^ (0:steps),"--","Color",black,"LineWidth",3)
-    [~,stats] = mygmres(@(y) A*y,b,steps,@(y) norm(b-A*y)/normA/normx);
+    [~,stats] = mygmres(@(y) A*y,b,steps,@(y) residual(y)/normA/normx);
     semilogy(0:steps,stats,"-.","Color",pink,"LineWidth",3)
     semilogy(0:steps,cgrate .^ (0:steps),":","Color",black,"LineWidth",3)
     axis([0 steps 1e-17 1e0])

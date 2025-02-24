@@ -19,13 +19,15 @@ x = randn(n,1);
 b = A*x;
 normA = norm(A);
 normx = norm(x);
+Avpa = vpa(A,24);
+bvpa = vpa(b,24);
 
-summary = @(xx) norm(b-A*xx) / (normA*normx);
+summary = @(xx) norm(bvpa-Avpa*vpa(xx,24)) / (normA*normx);
 [~,~,pcgstats] = mycg(@(x) A*x,@(x) R\(R'\x),b,0,(refines+1)*steps,summary);
 
 [xx,~,pcgirstats] = mycg(@(x) A*x,@(x) R\(R'\x),b,0,steps,summary);
 for refine = 1:refines
-    summary = @(y) norm(b-A*(y+xx)) / (normA*normx);
+    summary = @(y) norm(bvpa-Avpa*vpa(y+xx,24)) / (normA*normx);
     [dx,~,newstats] = mycg(@(x) A*x,@(x) R\(R'\x),b-A*xx,0,steps,summary);
     xx = xx + dx;
     pcgirstats(end+1:end+(length(newstats)-1)) = newstats(2:end);

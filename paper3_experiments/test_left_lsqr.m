@@ -10,15 +10,18 @@ s = logspace(-10,0,n);
 A = U*diag(s)*V';
 Pinv = diag(s .* linspace(1,4,n)) \ U';
 x = randn(n,1); b = A*x;
+Avpa = vpa(A,24);
+bvpa = vpa(b,24);
+residual = @(xx) double(norm(bvpa-Avpa*vpa(xx,24)));
 normA = norm(A);
 normx = norm(x);
 
-summary = @(y) [norm(b-A*y)/(normA*normx) norm(x-y)/normx];
+summary = @(y) [residual(y)/(normA*normx) norm(x-y)/normx];
 [~,~,lsqrstats] = mylsqr(@(y) Pinv*(A*y), @(y) A'*(Pinv'*y), Pinv*b, 0, 100, summary);
 [~,~,cgstats] = mycg(@(y) A'*(Pinv'*(Pinv*(A*y))),@(y) y,A'*(Pinv'*(Pinv*b)),0,100,summary);
-summary = @(y) [norm(b-A*(A'*(Pinv'*y)))/(normA*normx) norm(x-A'*(Pinv'*y))/normx];
+summary = @(y) [residual(A'*(Pinv'*y))/(normA*normx) norm(x-A'*(Pinv'*y))/normx];
 [~,~,cgadjstats] = mycg(@(y) Pinv*(A*(A'*(Pinv'*y))),@(y) y,Pinv*b,0,100,summary);
-summary = @(y) [norm(b-A*(A'*y))/(normA*normx) norm(x-A'*y)/normx];
+summary = @(y) [residual(A'*y)/(normA*normx) norm(x-A'*y)/normx];
 [~,~,pcgstats] = mycg(@(y) A*(A'*y),@(y) Pinv'*(Pinv*y),b,0,100,summary);
 
 close all
