@@ -14,6 +14,11 @@ function [x,iter,stats] = mylsqr(matvec,adjvec,b,tol,maxit,varargin)
     else
         verbose = false;
     end
+    if length(varargin) > 3 && ~isempty(varargin{4})
+        recompute_v_frequency = varargin{4};
+    else
+        recompute_v_frequency = Inf;
+    end
     stats = [];
     bnorm = norm(b);
     beta = bnorm; u = b / beta;
@@ -36,6 +41,10 @@ function [x,iter,stats] = mylsqr(matvec,adjvec,b,tol,maxit,varargin)
         phi = c * phibar;
         phibar = s * phibar;
         x = x + (phi/rho) * w;
+        if mod(iter,recompute_v_frequency) == 0
+            v = adjvec(b - matvec(x)) / (-phibar*c);
+            alpha = norm(v); v = v / alpha;
+        end
         w = v - (theta/rho) * w;
         if ~isempty(summary); stats(end+1,:) = summary(x); end %#ok<AGROW> 
         if abs(phibar * alpha * c) <= tol * resnorm; break; end
