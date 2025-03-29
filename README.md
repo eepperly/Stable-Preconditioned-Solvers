@@ -2,7 +2,33 @@
 
 [![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=eepperly/Randomized-Least-Squares-Solvers)
 
-This repository contains code for the paper [_Fast randomized least-squares solvers can be just as accurate and stable as classical direct solvers_](https://arxiv.org/abs/2406.03468) by [Ethan N. Epperly](https://www.ethanepperly.com), [Maike Meier](https://www.maths.ox.ac.uk/people/maike.meier), and [Yuji Nakatsukasa](https://people.maths.ox.ac.uk/nakatsukasa/). It also contains code for the earlier paper [_Fast and forward stable randomized algorithms for linear least-squares problems_](https://arxiv.org/abs/2311.04362) by [Ethan N. Epperly](https://www.ethanepperly.com); see also [that paper's repo](https://github.com/eepperly/Iterative-Sketching-Is-Stable).
+This repository contains code for the following three papers:
+
+1. [_Stable algorithms for general linear systems by preconditioning the normal equations_](https://arxiv.org/abs/2502.17767) by [Ethan N. Epperly](https://www.ethanepperly.com), [Anne Greenbaum](https://amath.washington.edu/people/anne-greenbaum), and [Yuji Nakatsukasa](https://people.maths.ox.ac.uk/nakatsukasa/).
+2. [_Fast randomized least-squares solvers can be just as accurate and stable as classical direct solvers_](https://arxiv.org/abs/2406.03468) by [Ethan N. Epperly](https://www.ethanepperly.com), [Maike Meier](https://www.maths.ox.ac.uk/people/maike.meier), and [Yuji Nakatsukasa](https://people.maths.ox.ac.uk/nakatsukasa/).
+3. [_Fast and forward stable randomized algorithms for linear least-squares problems_](https://arxiv.org/abs/2311.04362) by [Ethan N. Epperly](https://www.ethanepperly.com).
+
+If you use this software in published research, please cite the first two papers:
+
+```bibtex
+@article{EGN25,
+  title = {Stable Algorithms for General Linear Systems by Preconditioning the Normal Equations},
+  author = {Epperly, Ethan N. and Greenbaum, Anne and Nakatsukasa, Yuji},
+  year = {2025},
+  month = mar,
+  journal = {arXiv preprint arXiv:2502.17767},
+  doi = {10.48550/arXiv.2502.17767},
+}
+
+@article{EMN24,
+  title = {Fast Randomized Least-Squares Solvers Can Be Just as Accurate and Stable as Classical Direct Solvers},
+  author = {Epperly, Ethan N. and Meier, Maike and Nakatsukasa, Yuji},
+  year = {2024},
+  month = jun,
+  journal = {arXiv preprint arXiv:2406.03468},
+  doi = {10.48550/arXiv.2406.03468},
+}
+```
 
 ## Background: Fast, randomized least-squares methods
 
